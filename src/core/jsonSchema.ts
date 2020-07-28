@@ -51,7 +51,7 @@ export function setId(type: SchemaType, content: any, id: string): void {
 function getIdPropertyName(type: SchemaType): string {
     switch (type) {
         case 'Draft04': return 'id';
-        case 'Draft07': return '$id';
+        case 'LatestDraft': return '$id';
     }
 }
 
@@ -117,7 +117,7 @@ export function searchAllSubSchema(schema: Schema, onFoundSchema: (subSchema: Sc
         walkObject(s.properties, paths.concat('properties'), parentIds);
         walkObject(s.patternProperties, paths.concat('patternProperties'), parentIds);
         walkMaybeArray(s.dependencies, paths.concat('dependencies'), parentIds);
-        if (schema.type === 'Draft07') {
+        if (schema.type === 'LatestDraft') {
             if ('propertyNames' in s) {
                 walk(s.propertyNames, paths.concat('propertyNames'), parentIds);
                 walk(s.contains, paths.concat('contains'), parentIds);
@@ -351,13 +351,16 @@ export function searchAllSubSchema(schema: Schema, onFoundSchema: (subSchema: Sc
 export function selectSchemaType(content: any): { type: SchemaType; openApiVersion?: 2 | 3; } {
     if (content.$schema) {
         const schema = content.$schema;
-        const match = schema.match(/http:\/\/json-schema\.org\/draft-(\d+)\/schema#?/);
+        const match = schema.match(/https?:\/\/json-schema\.org\/draft(?:(?:-(\d+))|(?:\/(2019-09)))\/schema#?/);
         if (match) {
+            if (match[2] != null) {
+                return { type: 'LatestDraft' };
+            }
             const version = Number(match[1]);
             if (version <= 4) {
                 return { type: 'Draft04' };
             } else {
-                return { type: 'Draft07' };
+                return { type: 'LatestDraft' };
             }
         }
     }
@@ -371,7 +374,7 @@ export function selectSchemaType(content: any): { type: SchemaType; openApiVersi
         const openapi = content.openapi;
         if (/^3\.\d+\.\d+$/.test(openapi)) {
             return {
-                type: 'Draft07',
+                type: 'LatestDraft',
                 openApiVersion: 3,
             };
         }

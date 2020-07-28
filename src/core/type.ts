@@ -13,7 +13,7 @@ import { getId, selectSchemaType, setId } from './jsonSchema';
 export type JsonSchema = JsonSchemaDraft04.Schema | JsonSchemaDraft07.Schema;
 export type JsonSchemaObject = JsonSchemaDraft04.Schema | JsonSchemaDraft07.SchemaObject;
 
-export type SchemaType = 'Draft04' | 'Draft07';
+export type SchemaType = 'Draft04' | 'LatestDraft';
 
 export interface Schema {
     type: SchemaType;
