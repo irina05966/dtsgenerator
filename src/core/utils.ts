@@ -66,7 +66,7 @@ export function mergeSchema(a: any, b: any): any {
         }
         if (Array.isArray(value)) {
             a[key] = (a[key] || []).concat(value);
-        } else if (typeof value === 'object') {
+        } else if (typeof value === 'object' && value !== null) {
             a[key] = mergeSchema(a[key] || {}, value);
         }
         else if (key === 'type' && value === 'null' && a[key] && a[key] !== value) {
